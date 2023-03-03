@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PlanYourHeist
 {
@@ -27,28 +28,53 @@ namespace PlanYourHeist
 
             Console.WriteLine($"\nYour team has {team.Count} members.");
 
-            Random rnd = new Random();
-
-            int luckValue = rnd.Next(-10, 10);
-            int bankDifficulty = 100 + luckValue;
-
-            int sumOfSkillLevels = 0;
-            foreach (TeamMember member in team)
+            int numOfScenarios;
+            while (true)
             {
-                sumOfSkillLevels += member.SkillLevel;
+                Console.Write("\nHow many heist simulations do you want to run?: ");
+                string response = Console.ReadLine();
+
+                bool isNumber = int.TryParse(response, out numOfScenarios);
+                if (isNumber && numOfScenarios > 0)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("\nPlease enter a positive integer.");
+                }
             }
 
-            Console.WriteLine("\n--- HEIST REPORT ---");
-            Console.WriteLine($"Team Skill Level: {sumOfSkillLevels}");
-            Console.WriteLine($"Bank Difficulty: {bankDifficulty}");
-
-            if (sumOfSkillLevels >= bankDifficulty)
+            foreach (int scenarioNum in Enumerable.Range(0, numOfScenarios))
             {
-                Console.WriteLine("\nSuccess! You pulled off the heist!");
+                RunHeist(team, scenarioNum);
             }
-            else
+
+            void RunHeist(List<TeamMember> team, int runNumber)
             {
-                Console.WriteLine("\nBusted! You're gonna rot in prison!");
+                Random rnd = new Random();
+
+                int luckValue = rnd.Next(-10, 10);
+                int bankDifficulty = 100 + luckValue;
+
+                int sumOfSkillLevels = 0;
+                foreach (TeamMember member in team)
+                {
+                    sumOfSkillLevels += member.SkillLevel;
+                }
+
+                Console.WriteLine($"\n--- HEIST REPORT ({runNumber}) ---");
+                Console.WriteLine($"Team Skill Level: {sumOfSkillLevels}");
+                Console.WriteLine($"Bank Difficulty: {bankDifficulty}");
+
+                if (sumOfSkillLevels >= bankDifficulty)
+                {
+                    Console.WriteLine("\nSuccess! You pulled off the heist!");
+                }
+                else
+                {
+                    Console.WriteLine("\nBusted! You're gonna rot in prison!");
+                }
             }
 
             TeamMember CreateNewTeamMember()
