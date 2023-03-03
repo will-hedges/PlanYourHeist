@@ -18,11 +18,9 @@ namespace PlanYourHeist
         public void ShowTeamMemberStats()
         {
             Console.WriteLine();
-            Console.WriteLine(
-                @$"{Name}
-    - Skill Level: {SkillLevel}
-    - Courage Factor: {CourageFactor}"
-            );
+            Console.WriteLine(Name);
+            Console.WriteLine($" - Skill Level: {SkillLevel}");
+            Console.WriteLine($" - Courage Factor: {CourageFactor}");
         }
     }
 }

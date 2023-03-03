@@ -25,10 +25,12 @@ namespace PlanYourHeist
                 }
             }
 
-            Console.WriteLine();
-            Console.WriteLine($"Your team has {team.Count} members.");
+            Console.WriteLine($"\nYour team has {team.Count} members.");
 
-            int bankDifficulty = 100;
+            Random rnd = new Random();
+
+            int luckValue = rnd.Next(-10, 10);
+            int bankDifficulty = 100 + luckValue;
 
             int sumOfSkillLevels = 0;
             foreach (TeamMember member in team)
@@ -36,14 +38,17 @@ namespace PlanYourHeist
                 sumOfSkillLevels += member.SkillLevel;
             }
 
-            Console.WriteLine();
+            Console.WriteLine("\n--- HEIST REPORT ---");
+            Console.WriteLine($"Team Skill Level: {sumOfSkillLevels}");
+            Console.WriteLine($"Bank Difficulty: {bankDifficulty}");
+
             if (sumOfSkillLevels >= bankDifficulty)
             {
-                Console.WriteLine("Success! You pulled off the heist!");
+                Console.WriteLine("\nSuccess! You pulled off the heist!");
             }
             else
             {
-                Console.WriteLine("Busted! You're gonna rot in prison!");
+                Console.WriteLine("\nBusted! You're gonna rot in prison!");
             }
 
             TeamMember CreateNewTeamMember()
@@ -55,9 +60,7 @@ namespace PlanYourHeist
                     The courage factor should be a decimal between 0.0 and 2.0
             */
             {
-                Console.WriteLine();
-                Console.WriteLine(" --- CREATE A NEW TEAM MEMBER --- ");
-                Console.WriteLine();
+                Console.WriteLine("\n--- CREATE A NEW TEAM MEMBER ---\n");
                 Console.Write($"Team member name: ");
                 string name = Console.ReadLine().Trim();
 
