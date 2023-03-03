@@ -18,7 +18,6 @@ namespace PlanYourHeist
                 if (teamMember != null)
                 {
                     team.Add(teamMember);
-                    teamMember.ShowTeamMemberStats();
                 }
                 else
                 {
@@ -27,10 +26,24 @@ namespace PlanYourHeist
             }
 
             Console.WriteLine();
-            Console.WriteLine($" --- YOUR TEAM ({team.Count} MEMBERS) --- ");
+            Console.WriteLine($"Your team has {team.Count} members.");
+
+            int bankDifficulty = 100;
+
+            int sumOfSkillLevels = 0;
             foreach (TeamMember member in team)
             {
-                member.ShowTeamMemberStats();
+                sumOfSkillLevels += member.SkillLevel;
+            }
+
+            Console.WriteLine();
+            if (sumOfSkillLevels >= bankDifficulty)
+            {
+                Console.WriteLine("Success! You pulled off the heist!");
+            }
+            else
+            {
+                Console.WriteLine("Busted! You're gonna rot in prison!");
             }
 
             TeamMember CreateNewTeamMember()
