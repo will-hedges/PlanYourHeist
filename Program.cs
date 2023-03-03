@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PlanYourHeist
 {
@@ -7,8 +8,30 @@ namespace PlanYourHeist
         static void Main(string[] args)
         {
             Console.WriteLine("Plan Your Heist!");
-            TeamMember teamMember = CreateNewTeamMember();
-            teamMember.ShowTeamMemberStats();
+
+            // collect team members until the name input is blank string
+            List<TeamMember> team = new List<TeamMember>();
+            bool creatingTeam = true;
+            while (creatingTeam)
+            {
+                TeamMember teamMember = CreateNewTeamMember();
+                if (teamMember != null)
+                {
+                    team.Add(teamMember);
+                    teamMember.ShowTeamMemberStats();
+                }
+                else
+                {
+                    creatingTeam = false;
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine($" --- YOUR TEAM ({team.Count} MEMBERS) --- ");
+            foreach (TeamMember member in team)
+            {
+                member.ShowTeamMemberStats();
+            }
 
             TeamMember CreateNewTeamMember()
             /*
@@ -20,10 +43,15 @@ namespace PlanYourHeist
             */
             {
                 Console.WriteLine();
-                Console.WriteLine("--- CREATE A NEW TEAM MEMBER ---");
+                Console.WriteLine(" --- CREATE A NEW TEAM MEMBER --- ");
                 Console.WriteLine();
                 Console.Write($"Team member name: ");
                 string name = Console.ReadLine().Trim();
+
+                if (name == "")
+                {
+                    return null;
+                }
 
                 int skillLevel;
                 while (true)
