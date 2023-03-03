@@ -10,6 +10,9 @@ namespace PlanYourHeist
         {
             Console.WriteLine("Plan Your Heist!");
 
+            // allow the user to set the difficulty level
+            int bankDifficulty = GetPositiveIntegerInput("Enter a value for the bank difficulty");
+
             // collect team members until the name input is blank string
             List<TeamMember> team = new List<TeamMember>();
             bool creatingTeam = true;
@@ -26,36 +29,63 @@ namespace PlanYourHeist
                 }
             }
 
-            Console.WriteLine($"\nYour team has {team.Count} members.");
+            Console.WriteLine($"\n\nYour team has {team.Count} members.");
 
-            int numOfScenarios;
-            while (true)
-            {
-                Console.Write("\nHow many heist simulations do you want to run?: ");
-                string response = Console.ReadLine();
+            // allow the user to input the number of scenarios to run
+            int numOfScenarios = GetPositiveIntegerInput(
+                "How many heist simulations do you want to run?"
+            );
 
-                bool isNumber = int.TryParse(response, out numOfScenarios);
-                if (isNumber && numOfScenarios > 0)
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("\nPlease enter a positive integer.");
-                }
-            }
+            // count the number of successful and failed heists
+            decimal successfulHeists = 0;
+            decimal failedHeists = 0;
 
             foreach (int scenarioNum in Enumerable.Range(0, numOfScenarios))
             {
-                RunHeist(team, scenarioNum);
+                bool successful = RunHeist(bankDifficulty, team, scenarioNum);
+                if (successful)
+                {
+                    successfulHeists++;
+                }
+                else
+                {
+                    failedHeists++;
+                }
             }
 
-            void RunHeist(List<TeamMember> team, int runNumber)
+            decimal oddsOfSuccess = successfulHeists / numOfScenarios * 100;
+
+            // display the number of successful and failed heists, as well as the odds of success
+            Console.WriteLine("\n--- FINAL HEIST REPORT ---");
+            Console.WriteLine($"Successful runs: {successfulHeists}");
+            Console.WriteLine($"Failed runs: {failedHeists}");
+            Console.WriteLine($"\nOdds of success = {oddsOfSuccess}%");
+
+            int GetPositiveIntegerInput(string prompt)
+            {
+                while (true)
+                {
+                    Console.Write($"\n{prompt}: ");
+                    string answer = Console.ReadLine();
+                    int res;
+                    bool isNumber = int.TryParse(answer, out res);
+                    if (isNumber && res > 0)
+                    {
+                        return res;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nPlease enter a positive integer.");
+                    }
+                }
+            }
+
+            bool RunHeist(int difficultyLevel, List<TeamMember> team, int runNumber)
             {
                 Random rnd = new Random();
 
                 int luckValue = rnd.Next(-10, 10);
-                int bankDifficulty = 100 + luckValue;
+                difficultyLevel += luckValue;
 
                 int sumOfSkillLevels = 0;
                 foreach (TeamMember member in team)
@@ -63,17 +93,19 @@ namespace PlanYourHeist
                     sumOfSkillLevels += member.SkillLevel;
                 }
 
-                Console.WriteLine($"\n--- HEIST REPORT ({runNumber}) ---");
+                Console.WriteLine($"\n--- HEIST REPORT ({runNumber + 1}) ---");
                 Console.WriteLine($"Team Skill Level: {sumOfSkillLevels}");
-                Console.WriteLine($"Bank Difficulty: {bankDifficulty}");
+                Console.WriteLine($"Bank Difficulty: {difficultyLevel}");
 
-                if (sumOfSkillLevels >= bankDifficulty)
+                if (sumOfSkillLevels >= difficultyLevel)
                 {
-                    Console.WriteLine("\nSuccess! You pulled off the heist!");
+                    Console.WriteLine("\nSuccess! You pulled off the heist!\n");
+                    return true;
                 }
                 else
                 {
-                    Console.WriteLine("\nBusted! You're gonna rot in prison!");
+                    Console.WriteLine("\nBusted! You're gonna rot in prison!\n");
+                    return false;
                 }
             }
 
@@ -86,7 +118,7 @@ namespace PlanYourHeist
                     The courage factor should be a decimal between 0.0 and 2.0
             */
             {
-                Console.WriteLine("\n--- CREATE A NEW TEAM MEMBER ---\n");
+                Console.WriteLine("\n\n--- CREATE A NEW TEAM MEMBER ---\n");
                 Console.Write($"Team member name: ");
                 string name = Console.ReadLine().Trim();
 
@@ -95,23 +127,7 @@ namespace PlanYourHeist
                     return null;
                 }
 
-                int skillLevel;
-                while (true)
-                {
-                    Console.WriteLine();
-                    Console.Write($"Enter {name}'s skill level: ");
-                    string answer = Console.ReadLine();
-                    bool isInteger = int.TryParse(answer, out skillLevel);
-                    if (isInteger && skillLevel > 0)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine();
-                        Console.WriteLine("Please enter a positive integer for skill level");
-                    }
-                }
+                int skillLevel = GetPositiveIntegerInput($"Enter a skill level for {name}");
 
                 double courageFactor;
                 while (true)
@@ -127,9 +143,7 @@ namespace PlanYourHeist
                     else
                     {
                         Console.WriteLine();
-                        Console.WriteLine(
-                            "Please enter a value between 0.0 and 2.0 for courage factor."
-                        );
+                        Console.WriteLine("Please enter a value between 0.0 and 2.0");
                     }
                 }
 
